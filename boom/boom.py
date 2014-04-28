@@ -13,9 +13,11 @@ from gevent.pool import Pool
 from requests import RequestException
 from socket import gethostbyname, gaierror
 
-from boom import __version__, _patch     # NOQA
-from boom.util import resolve_name
-from boom.pgbar import AnimatedProgressBar
+import _patch # NOQA
+from util import resolve_name
+from pgbar import AnimatedProgressBar
+
+__version__ = '0.9'
 
 monkey.patch_all()
 
@@ -332,7 +334,7 @@ def main():
                               "a request is done for example: "
                               "eg. post_hook(response). "
                               "It must return a given response parameter or "
-                              "raise an `boom._boom.RequestException` for "
+                              "raise an `boom.boom.RequestException` for "
                               "failed request."),
                         type=str)
 

@@ -9,9 +9,9 @@ from gevent.pywsgi import WSGIServer
 import requests
 import gevent
 
-from boom._boom import (run as runboom, main,
-                        resolve, RunResults, RequestException)
-from boom import _boom
+from boom.boom import (run as runboom, main,
+                       resolve, RunResults, RequestException)
+from boom import boom
 
 
 class App(object):
@@ -219,7 +219,7 @@ class TestBoom(unittest.TestCase):
         try:
             sys.stdout = StringIO.StringIO()
             sys.stderr = StringIO.StringIO()
-            _boom.print_json(results)
+            boom.print_json(results)
 
             sys.stdout.seek(0)
             output = sys.stdout.read()

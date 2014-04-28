@@ -1,1 +1,2 @@
-__version__ = '0.9'
+# allows boom.main instead of boom.boom.main, etc
+from boom import *

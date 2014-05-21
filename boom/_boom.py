@@ -26,6 +26,15 @@ logger = logging.getLogger('boom')
 _VERBS = ('GET', 'POST', 'DELETE', 'PUT', 'HEAD', 'OPTIONS')
 _DATA_VERBS = ('POST', 'PUT')
 
+class BoomCall(object):
+    def __init__(self, start):
+        self.start = start
+        self.finish = None
+        self.status = None
+
+    @property
+    def duration(self):
+        return self.finish - self.start
 
 class RunResults(object):
 
@@ -37,6 +46,7 @@ class RunResults(object):
     """
 
     def __init__(self, num=1, quiet=False):
+        self.rlist = []
         self.status_code_counter = defaultdict(list)
         self.errors = []
         self.total_time = None
@@ -69,11 +79,8 @@ def calc_stats(results):
 
        The statistics are returned as a RunStats object.
     """
-    all_res = []
-    count = 0
-    for values in results.status_code_counter.values():
-        all_res += values
-        count += len(values)
+    all_res = [x.duration for x in results.rlist]
+    count = len(all_res)
 
     cum_time = sum(all_res)
 
@@ -162,7 +169,7 @@ def onecall(method, url, results, **options):
 
     RequestExceptions are caught and put into the errors set.
     """
-    start = time.time()
+    one = BoomCall(time.time())
 
     if 'data' in options and callable(options['data']):
         options = copy(options)
@@ -183,8 +190,9 @@ def onecall(method, url, results, **options):
     except RequestException as exc:
         results.errors.append(exc)
     else:
-        duration = time.time() - start
-        results.status_code_counter[res.status_code].append(duration)
+        one.finish = time.time()
+        one.status = res.status_code
+        results.rlist.append(one)
     finally:
         results.incr()
 
